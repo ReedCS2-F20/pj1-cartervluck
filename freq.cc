@@ -119,6 +119,22 @@ int hashValue(std::string key, int modulus) {
   return hashValue;
 }
 
+// insertAt(a,value,index,size)
+//
+// inserts `value` at `index` in the array `a`, shifting all values
+// to the right of `index` to the right and deleting the last value
+// of the array.
+//
+// used to dump a dictionary properly
+//
+void insertAt(freq::entry* a, freq::entry* value, int index, int size) {
+  for (int i = size-1; i > index; i--) { 
+    if (i > 0) { // just in case; don't want to go too far back
+      a[i] = a[i-1]; // shift everything up to index to the right
+    }
+  }
+  a[index] = *value;
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * *
 //
@@ -233,7 +249,6 @@ namespace freq {
       }
       current->count++;
     }
-    std::cout << "dbg";
     return;
   }
 
@@ -246,17 +261,35 @@ namespace freq {
   //
   entry* dumpAndDestroy(dict* D) {
     // UNIMPLEMENTED
-    entry* es = new entry[3];
-    es[0].word = "hello";
-    es[0].count = 0;
-    es[0].next = nullptr;
-    es[1].word = "world";
-    es[1].count = 1;
-    es[1].next = nullptr;
-    es[2].word = "!";
-    es[2].count = 2;
-    es[2].next = nullptr;
+    entry* es = new entry[D->numEntries];
+    int entryIndex = 0;
+    for (int bucketIndex = 0; bucketIndex < D->numBuckets; bucketIndex++) { // iterate through buckets
+      entry* current = D->buckets[bucketIndex].first;
+      while (current != nullptr) { // iterate through entries in the bucket
+        int i = 0;
+        for (int ind = 0; es[ind].count > current->count && entryIndex > ind; ind++, i = ind); // iterate through
+        // the array until you get to undefined parts or a place where the current index is <= current->count
+        entryIndex++;
+        insertAt(es,current,i,D->numEntries); // calls insertAt to place current at index
+        current = current->next;
+      } // this way is pretty complex, there might be a faster solution
+    } // es should be built, now just to delete D
+    //(*sizep) = entryIndex + 1;
+    
+    for (int bucketIndex = 0; bucketIndex < D->numBuckets; bucketIndex++) { // iterate through buckets
+      entry* current = D->buckets[bucketIndex].first;
+      while (current != nullptr) {
+        entry* last = current;
+        current = last->next;
+        delete last;
+      }
+      //delete &(D->buckets[bucketIndex]);
+    }
+    delete D->buckets;
+    delete D;
+
     return es;
   }
+
 } // end namespace freq
 
