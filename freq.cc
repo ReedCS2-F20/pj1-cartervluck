@@ -208,6 +208,32 @@ namespace freq {
   //
   void increment(dict* D, std::string w) {
     // UNIMPLEMENTED
+    int hash = hashValue(w,D->numBuckets);
+    bucket bucket = D->buckets[hash]; // Creates a copy of the bucket, but the entries are pointers so its ok
+    if (getCount(D, w) == 0) {
+      if (bucket.first == nullptr) {
+        bucket.first = new entry;
+        bucket.first->word = w;
+        bucket.first->count = 1;
+        bucket.first->next = nullptr;
+      } else {
+        entry* current = bucket.first;
+        while (current->next != nullptr) {
+          current = current->next;
+        }
+        current->next = new entry;
+        current->next->word = w;
+        current->next->count = 1;
+        current->next->next = nullptr;
+      }
+    } else {
+      entry* current = bucket.first;
+      while (current->word != w) {
+        current = current->next;
+      }
+      current->count++;
+    }
+    std::cout << "dbg";
     return;
   }
 
