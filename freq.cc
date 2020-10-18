@@ -183,8 +183,12 @@ namespace freq {
   // Gets the count associated with the word `w` in `D`.
   //
   int getCount(dict* D, std::string w) {
-    // UNIMPLEMENTED
-    return 0;
+    bucket bucket = D->buckets[hashValue(w,D->numBuckets)];
+    entry* current = bucket.first;
+    while ( current != nullptr && current->word != w ) {
+      current = current->next;
+    }
+    return (current == nullptr ? 0 : current->count); // I hope it's ok to use ternary operator
   }
 
   // rehash(D):
