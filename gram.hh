@@ -18,7 +18,7 @@ namespace gram {
   };
 
   struct dict {
-    // UNIMPLEMENTED, but could use the structs defined above, somehow.
+    gram* first;
   };
 
   dict* build(void);

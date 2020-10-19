@@ -65,11 +65,27 @@ namespace gram {
   dict* build(void) {
     srand(time(0));
     dict* newD = new dict;
+    newD->first = nullptr;
     return newD;
   }
 
   std::string get(dict* D, std::string ws) {
-    return "hello"; // UNIMPLEMENTED
+    gram* currentGram = D->first;
+    while (currentGram != nullptr && currentGram->words != ws) {
+      currentGram = currentGram->next;
+    }
+    if (currentGram == nullptr) {
+      return ""; // Invalid lookup. should never happen, as every word in text should have a value by the time we do this kind of lookup
+    }
+    if (currentGram->followers == nullptr) {
+      return ""; // End behavior; that is, eof. hopefully there's some catch for it in chats.cc?
+    }
+    int randIndex = rand() % currentGram->number;
+    follower* currentFollower = currentGram->followers;
+    for (int i = 0; i < randIndex; i++) { 
+      currentFollower = currentFollower->next;
+    }
+    return currentFollower->word;
   }
 
   std::string get(dict* D, std::string w1, std::string w2) {
@@ -77,7 +93,27 @@ namespace gram {
   }
              
   void add(dict* D, std::string ws, std::string fw) {
-    return; // UNIMPLEMENTED
+    gram* currentGram = D->first;
+    while (currentGram != nullptr && currentGram->words != ws) {
+      currentGram = currentGram->next;
+    }
+    if (currentGram == nullptr) {
+      gram* newGram = new gram; // create new gram to push to front of dict
+      newGram->number = 1;
+      newGram->followers = new follower;
+      newGram->followers->word = fw;
+      newGram->followers->next = nullptr;
+      newGram->words = ws;
+      newGram->next = D->first;
+      D->first = newGram;
+    } else {
+      currentGram->number++; // increment number of followers for the word
+      follower* newFollower = new follower;
+      newFollower->word = fw;
+      newFollower->next = currentGram->followers; // push new word to front of linked list
+      currentGram->followers = newFollower;
+    }
+    return;
   }
   
   void add(dict* D, std::string w1, std::string w2, std::string fw) {

@@ -89,6 +89,32 @@ gram::dict* train_chat(void) {
 //
 void chat(gram::dict* d, int lineWidth, int numLines) {
   // UNIMPLEMENTED. Does nothing.
+  int linesDone = 0;
+  int charsDone = 0;
+  std::string last = ".";
+  std::string last2 = ".";
+  bool done = false;
+  while (!done) {
+    std::string next = gram::get(d, last2, last);
+    if (next == "") {
+      next = gram::get(d, last);
+    }
+    if (next != "." && next != "," && next != "?" && next != "!") {
+      std::cout << " ";
+      charsDone += 1;
+    } else if (next == "." && numLines - 1 <= linesDone) {
+      done = true;
+    }
+    if (charsDone + next.length() > lineWidth) {
+      std::cout << std::endl;
+      linesDone++;
+      charsDone = 0;
+    }
+    std::cout << next;
+    charsDone += next.length();
+    last2 = last;
+    last = next;
+  }
 }
 
 // main()

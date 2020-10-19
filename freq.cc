@@ -213,8 +213,7 @@ namespace freq {
   // that new structure.
   //
   void rehash(dict* D) {
-    // UNIMPLEMENTED
-    std::cout << "LOG: REHASHING!!!" << std::endl;
+    //std::cout << "LOG: REHASHING!!!" << std::endl;
     int nbuckets = primeAtLeast(D->numBuckets*2);
     bucket* newArray = buildBuckets(nbuckets); // heap allocated array of buckets
     for (int i = 0; i < D->numBuckets; i++) { // iterate through buckets
@@ -224,7 +223,7 @@ namespace freq {
         entry* newEntry = new entry; // create a new entry in the front of the array
         newEntry->next = front;
         newEntry->word = current->word;
-        std::cout << "LOG: just copied " << newEntry->word << std::endl;
+        //std::cout << "LOG: just copied " << newEntry->word << std::endl;
         newEntry->count = current->count;
         newArray[hashValue(current->word,nbuckets)].first = newEntry;
         entry* last = current;
@@ -232,7 +231,7 @@ namespace freq {
         delete last; // because we're creating a new entry we need to dealloc the old current
       }
     } // newArray has been constructed
-    std::cout << "LOG: just rehashed, feeling good" << std::endl << "LOG: new bucket count: " << nbuckets << std::endl;
+    //std::cout << "LOG: just rehashed, feeling good" << std::endl << "LOG: new bucket count: " << nbuckets << std::endl;
     bucket* oldArray = D->buckets; // points to the start of the old array
     D->buckets = newArray; // points to the start of the new array
     D->numBuckets = nbuckets;
@@ -246,12 +245,12 @@ namespace freq {
   // creating a new entry.
   //
   void increment(dict* D, std::string w) {
-    std::cout << "LOG: incrementing." << std::endl;
+    //std::cout << "LOG: incrementing." << std::endl;
     int hash = hashValue(w,D->numBuckets);
     bucket bucket = D->buckets[hash]; // Creates a copy of the bucket, but the entries are pointers so its ok
     if (getCount(D, w) == 0) { // the word is not in the dict yet
-      std::cout << "LOG: adding new word: " << w << std::endl;
-      std::cout << "LOG: now we have " << D->numEntries + 1 << " words. Num Buckets: " << D->numBuckets << "." << std::endl;
+      //std::cout << "LOG: adding new word: " << w << std::endl;
+      //std::cout << "LOG: now we have " << D->numEntries + 1 << " words. Num Buckets: " << D->numBuckets << "." << std::endl;
       if (D->numEntries/D->numBuckets >= D->loadFactor) {
         rehash(D); // rehash D if adding a new entry will exceed the load factor
       }
@@ -273,7 +272,7 @@ namespace freq {
       }
       D->numEntries++;
     } else { // the word is in the dict
-      std::cout << "LOG: Add 1 instance of " << w << std::endl;
+      //std::cout << "LOG: Add 1 instance of " << w << std::endl;
       entry* current = bucket.first; // current points to the heap, as does bucket.first so we can change current
       while (current->word != w) {
         current = current->next;
